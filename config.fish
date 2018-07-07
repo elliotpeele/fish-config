@@ -68,16 +68,17 @@ else
 end
 
 # Make sure my bin dir is first
-set PATH $HOME/bin /sbin /usr/sbin $PATH
-set CVS_RSH ssh
-setenv PYTHONSTARTUP $HOME/git/fish-config/pystartup
+set -gx PATH $HOME/bin /sbin /usr/sbin $PATH
+set -gx CVS_RSH ssh
+set -gx PYTHONSTARTUP $HOME/git/fish-config/pystartup
 
-#export PROMPT_COMMAND='echo -ne "\033]0;${USER}@${HOSTNAME%%.*}: ${PWD/#$HOME/~}\007"'
-
-setenv JAVA_HOME /usr/lib/jvm/jre
+set -gx JAVA_HOME /usr/lib/jvm/jre
 
 # load solarized colors
 . $HOME/git/fish-config/solarized.fish
 . $HOME/git/fish-config/colors.fish
 
-setenv EDITOR /bin/vim
+set -gx GOROOT $HOME/dist/go
+set -gx PATH $GOROOT/bin $PATH
+
+set -gx EDITOR /bin/vim
