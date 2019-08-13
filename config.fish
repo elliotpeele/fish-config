@@ -3,9 +3,7 @@ set SSH_ENV $HOME/.ssh/environment.$HOSTNAME
 set SSH_SOCK /var/tmp/elliot-ssh/socket.$HOSTNAME
 
 function start_agent
-    # echo "Initializing new SSH agent ..."
     ssh-agent -c | sed 's/^echo/#echo/' > $SSH_ENV
-    # echo "succeeded"
     relink_ssh_sock
     ssh-add
 end
@@ -21,9 +19,7 @@ function test_identities
 end
 
 function relink_ssh_sock
-    # echo "relinking ssh sock $SSH_AUTH_SOCK"
     if [ "$SSH_AUTH_SOCK" = "$SSH_SOCK" ]
-        # echo "SSH_AUTH_SOCK already set to SSH_SOCK"
         return
     end
     set SSH_SOCK_DIR (dirname $SSH_SOCK)
@@ -83,8 +79,6 @@ set -gx PATH $HOME/bin /sbin /usr/sbin $PATH
 set -gx CVS_RSH ssh
 set -gx PYTHONSTARTUP $HOME/git/fish-config/pystartup
 
-#export PROMPT_COMMAND='echo -ne "\033]0;${USER}@${HOSTNAME%%.*}: ${PWD/#$HOME/~}\007"'
-
 set -gx JAVA_HOME /usr/lib/jvm/jre
 
 # load solarized colors
@@ -94,4 +88,8 @@ set -gx JAVA_HOME /usr/lib/jvm/jre
 set -gx GOROOT $HOME/dist/go
 set -gx PATH $GOROOT/bin $PATH
 
-set -gx EDITOR /bin/vim
+if [ -e /usr/local/bin/vim ]
+    set -gx EDITOR /usr/local/bin/vim
+else
+    set -gx EDITOR /bin/vim
+end
