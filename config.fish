@@ -1,4 +1,4 @@
-setenv HOSTNAME (hostname -f)
+set -gx HOSTNAME (hostname -f)
 set SSH_ENV $HOME/.ssh/environment.$HOSTNAME
 set SSH_SOCK /var/tmp/elliot-ssh/socket.$HOSTNAME
 
@@ -34,7 +34,7 @@ function relink_ssh_sock
     end
     chmod 700 $SSH_SOCK_DIR
     ln -s $SSH_AUTH_SOCK $SSH_SOCK
-    setenv SSH_AUTH_SOCK $SSH_SOCK
+    set -gx SSH_AUTH_SOCK $SSH_SOCK
 end
 
 function tmux -a cmd -d "Wraps tmux to provide updatenv command"
@@ -61,23 +61,37 @@ if [ ! -n "$SSH_AUTH_SOCK" ]
     #    echo "no auth sock found"
     if [ -L "$SSH_SOCK" and -e (readlink $SSH_SOCK) ]
         echo "using $SSH_SOCK"
-        setenv SSH_AUTH_SOCK $SSH_SOCK
+        set -gx SSH_AUTH_SOCK $SSH_SOCK
     end
 else
     relink_ssh_sock
 end
 
+function goenv
+    setenv GOPATH $argv[1]
+    setenv GO111MODULE on
+    set -gx PATH $GOPATH/bin:$PATH
+end
+
+# Setup locale since the system doesn't provide initialization
+set -gx LANG en_US.UTF-8
+set -gx LC_CTYPE en_US.UTF-8
+set -gx LC_ALL en_US.UTF-8
+
 # Make sure my bin dir is first
-set PATH $HOME/bin /sbin /usr/sbin $PATH
-set CVS_RSH ssh
-setenv PYTHONSTARTUP $HOME/git/fish-config/pystartup
+set -gx PATH $HOME/bin /sbin /usr/sbin $PATH
+set -gx CVS_RSH ssh
+set -gx PYTHONSTARTUP $HOME/git/fish-config/pystartup
 
 #export PROMPT_COMMAND='echo -ne "\033]0;${USER}@${HOSTNAME%%.*}: ${PWD/#$HOME/~}\007"'
 
-setenv JAVA_HOME /usr/lib/jvm/jre
+set -gx JAVA_HOME /usr/lib/jvm/jre
 
 # load solarized colors
 . $HOME/git/fish-config/solarized.fish
 . $HOME/git/fish-config/colors.fish
 
-setenv EDITOR /bin/vim
+set -gx GOROOT $HOME/dist/go
+set -gx PATH $GOROOT/bin $PATH
+
+set -gx EDITOR /bin/vim
